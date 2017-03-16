@@ -36,6 +36,7 @@ void galois(uint32_t* out, int nbits, uint32_t taps, uint32_t init, int length) 
  * Prints the maximal length sequence of an LFSR with a user-specfied number of
  * bits and user specified polynomial taps. Can also generate gold codes from
  * such an LFSR.
+ * For terms to use, see: https://users.ece.cmu.edu/~koopman/lfsr/
  */
 int main(int argc, char** argv) {
 
@@ -49,7 +50,10 @@ int main(int argc, char** argv) {
     printf("EXAMPLE: %s 16 0xB400 0x0001\n", argv[0]);
     printf("EXAMPLE: %s 4 0x9 0x01\n", argv[0]);
     printf("EXAMPLE: %s 5 0x14 0x01\n", argv[0]);
-    printf("EXAMPLE: %s 6 0x30 0x01\n", argv[0]);
+    printf("EXAMPLE: %s 6 0x30 0x01\n\n", argv[0]);
+    printf("USAGE (gold codes): %s -g [codeindex] [#bits] [taps1] [taps2] [init]\n", argv[0]);  
+    printf("EXAMPLE: %s -g 1 5 0x14 0x17 0x01\n", argv[0]);
+
     return 0;
   }
   
@@ -64,11 +68,18 @@ int main(int argc, char** argv) {
 
   int nbits = atoi(argv[curarg++]);
   uint32_t taps = (int)strtol(argv[curarg++], NULL, 16);
+  uint32_t taps2;
+
+  if(mode==GOLD) {
+    taps2  = (int)strtol(argv[curarg++], NULL, 16);
+  }
+
   uint32_t init = (int)strtol(argv[curarg++], NULL, 16);
 
   uint32_t length = pow(2, nbits) - 1;
 
   uint32_t buf[length];
+  uint32_t buf2[length];
 
   galois(buf, nbits, taps, init, length);  
 
@@ -83,9 +94,12 @@ int main(int argc, char** argv) {
     break;
   case GOLD:
 
+    galois(buf2, nbits, taps2, init, length);
+
     for(i=0; i<length; i++){
       // Discard all but 0th bit
       buf[i] = buf[i]&1; 
+      buf2[i] = buf2[i]&1;
     }
     
     for(i=0; i<length; i++) {
@@ -94,7 +108,7 @@ int main(int argc, char** argv) {
 	goldOffset -= length;
       }
 
-      printf("%d,\n", buf[i] ^ buf[i+goldOffset]);
+      printf("%d,\n", buf[i] ^ buf2[i+goldOffset]);
     }
 
 
