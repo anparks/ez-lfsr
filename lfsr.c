@@ -88,7 +88,7 @@ int main(int argc, char** argv) {
   switch(mode) {
   case NORM:
     for(i=0; i < length; i++) {
-      printf("%d,\n", buf[i]);
+      printf("%d,", buf[i]);
     }
 
     break;
@@ -108,7 +108,7 @@ int main(int argc, char** argv) {
 	goldOffset -= length;
       }
 
-      printf("%d,\n", buf[i] ^ buf2[i+goldOffset]);
+      printf("%d,", buf[i] ^ buf2[i+goldOffset]);
     }
 
 
